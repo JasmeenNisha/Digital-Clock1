@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Professional Digital Clock</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 30px;
+
+            font-family: Arial, sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    #d8d0c5,
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    #c8c1b8,
+                    transparent 30%
+                ),
+                #eeeae4;
+        }
+
+
+        /* =================================
+           MAIN CLOCK CONTAINER
+        ================================= */
+
+        .clock-container {
+
+            width: 100%;
+
+            max-width: 1100px;
+
+            padding: 35px;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1.25fr;
+
+            gap: 40px;
+
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #17191d,
+                    #0d0f12
+                );
+
+            border-radius: 30px;
+
+            box-shadow:
+                0 30px 70px rgba(0, 0, 0, 0.35),
+                inset 0 1px 1px rgba(255,255,255,0.12);
+
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+
+        /* =================================
+           ANALOG CLOCK
+        ================================= */
+
+        .analog-clock {
+
+            width: min(360px, 80vw);
+
+            aspect-ratio: 1 / 1;
+
+            margin: auto;
+
+            position: relative;
+
+            border-radius: 50%;
+
+            background: #f4f2ed;
+
+            border: 14px solid #202226;
+
+            box-shadow:
+                0 0 0 4px #44474c,
+                0 15px 35px rgba(0,0,0,0.5),
+                inset 0 0 20px rgba(0,0,0,0.25);
+        }
+
+
+        /* =================================
+           WATCH NUMBERS
+        ================================= */
+
+        .number {
+
+            position: absolute;
+
+            left: 50%;
+
+            top: 50%;
+
+            width: 100%;
+
+            height: 100%;
+
+            transform:
+                translate(-50%, -50%)
+                rotate(var(--rotate));
+
+            text-align: center;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            color: #111;
+        }
+
+
+        /*
+           IMPORTANT:
+           Number ko rotate hone ke baad
+           dobara opposite direction me rotate
+           kar rahe hain.
+
+           Isse saare numbers seedhe rahenge.
+        */
+
+        .number span {
+
+            display: inline-block;
+
+            position: absolute;
+
+            top: 10px;
+
+            left: 50%;
+
+            transform:
+                translateX(-50%)
+                rotate(calc(-1 * var(--rotate)));
+        }
+
+
+        /* =================================
+           CLOCK HANDS
+        ================================= */
+
+        .hand {
+
+            position: absolute;
+
+            left: 50%;
+
+            bottom: 50%;
+
+            transform-origin: bottom center;
+
+            transform:
+                translateX(-50%)
+                rotate(0deg);
+
+            border-radius: 10px;
+
+            z-index: 5;
+        }
+
+
+        .hour-hand {
+
+            width: 8px;
+
+            height: 25%;
+
+            background: #111;
+        }
+
+
+        .minute-hand {
+
+            width: 5px;
+
+            height: 34%;
+
+            background: #111;
+        }
+
+
+        .second-hand {
+
+            width: 2px;
+
+            height: 38%;
+
+            background: #555;
+        }
+
+
+        /* =================================
+           CENTER DOT
+        ================================= */
+
+        .center-dot {
+
+            position: absolute;
+
+            width: 18px;
+
+            height: 18px;
+
+            background: #111;
+
+            border-radius: 50%;
+
+            left: 50%;
+
+            top: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            z-index: 10;
+        }
+
+
+        /* =================================
+           DIGITAL SECTION
+        ================================= */
+
+        .digital-section {
+
+            color: white;
+        }
+
+
+        .heading {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 18px;
+
+            color: #aeb3ba;
+
+            font-size: 14px;
+
+            letter-spacing: 6px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .heading::before,
+        .heading::after {
+
+            content: "";
+
+            width: 60px;
+
+            height: 1px;
+
+            background: #555;
+        }
+
+
+        /* =================================
+           DIGITAL CARD
+        ================================= */
+
+        .digital-card {
+
+            padding: 35px;
+
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.08),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid rgba(255,255,255,0.18);
+
+            box-shadow:
+                inset 0 1px 1px rgba(255,255,255,0.05),
+                0 20px 40px rgba(0,0,0,0.2);
+        }
+
+
+        /* =================================
+           DIGITAL TIME
+        ================================= */
+
+        .digital-time {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            font-size: clamp(45px, 7vw, 85px);
+
+            font-weight: bold;
+
+            letter-spacing: 3px;
+
+            white-space: nowrap;
+        }
+
+
+        .ampm {
+
+            font-size: 20px;
+
+            padding: 10px 16px;
+
+            border-radius: 30px;
+
+            background: #292c31;
+
+            color: #ddd;
+        }
+
+
+        .status-dot {
+
+            display: inline-block;
+
+            width: 9px;
+
+            height: 9px;
+
+            margin-left: 7px;
+
+            border-radius: 50%;
+
+            background: #65e572;
+
+            box-shadow: 0 0 12px #65e572;
+        }
+
+
+        /* =================================
+           DATE
+        ================================= */
+
+        .date {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-top: 25px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid #333;
+
+            color: #c7cbd0;
+
+            font-size: 18px;
+        }
+
+
+        .calendar-icon {
+
+            font-size: 25px;
+        }
+
+
+        /* =================================
+           DAY / DATE / MONTH
+        ================================= */
+
+        .info-section {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            margin-top: 20px;
+
+            padding: 20px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255,255,255,0.04);
+
+            border:
+                1px solid rgba(255,255,255,0.12);
+        }
+
+
+        .info {
+
+            text-align: center;
+
+            padding: 10px;
+
+            border-right:
+                1px solid #333;
+        }
+
+
+        .info:last-child {
+
+            border-right: none;
+        }
+
+
+        .info-title {
+
+            color: #888e97;
+
+            font-size: 12px;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .info-value {
+
+            color: white;
+
+            font-size: 16px;
+        }
+
+
+        /* =================================
+           FOOTER
+        ================================= */
+
+        .footer {
+
+            margin-top: 25px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            color: #888e97;
+
+            font-size: 13px;
+        }
+
+
+        .footer-icons {
+
+            display: flex;
+
+            gap: 12px;
+        }
+
+
+        .circle {
+
+            width: 42px;
+
+            height: 42px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            border-radius: 50%;
+
+            border: 1px solid #444;
+
+            color: #ccc;
+
+            font-size: 18px;
+        }
+
+
+        /* =================================
+           TABLET
+        ================================= */
+
+        @media (max-width: 850px) {
+
+            .clock-container {
+
+                grid-template-columns: 1fr;
+
+                max-width: 650px;
+
+                padding: 25px;
+            }
+
+
+            .analog-clock {
+
+                width: min(320px, 70vw);
+            }
+        }
+
+
+        /* =================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 500px) {
+
+            body {
+
+                padding: 12px;
+            }
+
+
+            .clock-container {
+
+                padding: 18px;
+
+                border-radius: 22px;
+
+                gap: 25px;
+            }
+
+
+            .analog-clock {
+
+                width: 250px;
+
+                border-width: 10px;
+            }
+
+
+            .number {
+
+                font-size: 21px;
+            }
+
+
+            .number span {
+
+                top: 7px;
+            }
+
+
+            .digital-card {
+
+                padding: 22px 14px;
+            }
+
+
+            .digital-time {
+
+                font-size: 38px;
+
+                gap: 5px;
+
+                letter-spacing: 1px;
+            }
+
+
+            .ampm {
+
+                font-size: 13px;
+
+                padding: 7px 10px;
+            }
+
+
+            .date {
+
+                font-size: 14px;
+            }
+
+
+            .info-section {
+
+                padding: 10px;
+            }
+
+
+            .info-title {
+
+                font-size: 9px;
+            }
+
+
+            .info-value {
+
+                font-size: 12px;
+            }
+
+
+            .footer {
+
+                flex-direction: column;
+
+                gap: 15px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="clock-container">
+
+
+        <!-- =================================
+             ANALOG WATCH
+        ================================= -->
+
+        <div class="analog-clock">
+
+
+            <div class="number" style="--rotate:0deg">
+                <span>12</span>
+            </div>
+
+
+            <div class="number" style="--rotate:30deg">
+                <span>1</span>
+            </div>
+
+
+            <div class="number" style="--rotate:60deg">
+                <span>2</span>
+            </div>
+
+
+            <div class="number" style="--rotate:90deg">
+                <span>3</span>
+            </div>
+
+
+            <div class="number" style="--rotate:120deg">
+                <span>4</span>
+            </div>
+
+
+            <div class="number" style="--rotate:150deg">
+                <span>5</span>
+            </div>
+
+
+            <div class="number" style="--rotate:180deg">
+                <span>6</span>
+            </div>
+
+
+            <div class="number" style="--rotate:210deg">
+                <span>7</span>
+            </div>
+
+
+            <div class="number" style="--rotate:240deg">
+                <span>8</span>
+            </div>
+
+
+            <div class="number" style="--rotate:270deg">
+                <span>9</span>
+            </div>
+
+
+            <div class="number" style="--rotate:300deg">
+                <span>10</span>
+            </div>
+
+
+            <div class="number" style="--rotate:330deg">
+                <span>11</span>
+            </div>
+
+
+            <!-- Hands -->
+
+            <div
+                class="hand hour-hand"
+                id="hourHand">
+            </div>
+
+
+            <div
+                class="hand minute-hand"
+                id="minuteHand">
+            </div>
+
+
+            <div
+                class="hand second-hand"
+                id="secondHand">
+            </div>
+
+
+            <!-- Center -->
+
+            <div class="center-dot"></div>
+
+
+        </div>
+
+
+        <!-- =================================
+             DIGITAL CLOCK
+        ================================= -->
+
+        <div class="digital-section">
+
+
+            <div class="heading">
+
+                DIGITAL CLOCK
+
+            </div>
+
+
+            <div class="digital-card">
+
+
+                <div class="digital-time">
+
+
+                    <span id="time">
+
+                        00:00:00
+
+                    </span>
+
+
+                    <span class="ampm">
+
+                        <span id="ampm">
+
+                            AM
+
+                        </span>
+
+
+                        <span class="status-dot"></span>
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- Date -->
+
+                <div class="date">
+
+
+                    <span class="calendar-icon">
+
+                        ▣
+
+                    </span>
+
+
+                    <span id="date">
+
+                        Loading...
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================
+                 INFORMATION
+            ================================= -->
+
+            <div class="info-section">
+
+
+                <div class="info">
+
+
+                    <div class="info-title">
+
+                        DAY
+
+                    </div>
+
+
+                    <div
+                        class="info-value"
+                        id="day">
+
+                        Monday
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="info">
+
+
+                    <div class="info-title">
+
+                        DATE
+
+                    </div>
+
+
+                    <div
+                        class="info-value"
+                        id="dateNumber">
+
+                        01
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="info">
+
+
+                    <div class="info-title">
+
+                        MONTH
+
+                    </div>
+
+
+                    <div
+                        class="info-value"
+                        id="month">
+
+                        January
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================
+                 FOOTER
+            ================================= -->
+
+            <div class="footer">
+
+
+                <span>
+
+                    ⏱ Good things take time.
+
+                </span>
+
+
+                <div class="footer-icons">
+
+
+                    <div class="circle">
+
+                        ◷
+
+                    </div>
+
+
+                    <div class="circle">
+
+                        ☾
+
+                    </div>
+
+
+                    <div class="circle">
+
+                        ⚙
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+
+
+        /* =================================
+           UPDATE CLOCK
+        ================================= */
+
+        function updateClock() {
+
+
+            const now = new Date();
+
+
+            /* =================================
+               DIGITAL TIME
+            ================================= */
+
+            let hours = now.getHours();
+
+            let minutes = now.getMinutes();
+
+            let seconds = now.getSeconds();
+
+
+            let ampm =
+                hours >= 12
+                    ? "PM"
+                    : "AM";
+
+
+            let displayHours =
+                hours % 12;
+
+
+            displayHours =
+                displayHours === 0
+                    ? 12
+                    : displayHours;
+
+
+            displayHours =
+                String(displayHours)
+                .padStart(2, "0");
+
+
+            minutes =
+                String(minutes)
+                .padStart(2, "0");
+
+
+            seconds =
+                String(seconds)
+                .padStart(2, "0");
+
+
+            document
+                .getElementById("time")
+                .textContent =
+                `${displayHours}:${minutes}:${seconds}`;
+
+
+            document
+                .getElementById("ampm")
+                .textContent =
+                ampm;
+
+
+            /* =================================
+               DATE
+            ================================= */
+
+            const days = [
+
+                "Sunday",
+
+                "Monday",
+
+                "Tuesday",
+
+                "Wednesday",
+
+                "Thursday",
+
+                "Friday",
+
+                "Saturday"
+
+            ];
+
+
+            const months = [
+
+                "January",
+
+                "February",
+
+                "March",
+
+                "April",
+
+                "May",
+
+                "June",
+
+                "July",
+
+                "August",
+
+                "September",
+
+                "October",
+
+                "November",
+
+                "December"
+
+            ];
+
+
+            const dayName =
+                days[now.getDay()];
+
+
+            const monthName =
+                months[now.getMonth()];
+
+
+            const dateNumber =
+                String(
+                    now.getDate()
+                ).padStart(2, "0");
+
+
+            document
+                .getElementById("date")
+                .textContent =
+                `${dayName}, ${dateNumber} ${monthName} ${now.getFullYear()}`;
+
+
+            document
+                .getElementById("day")
+                .textContent =
+                dayName;
+
+
+            document
+                .getElementById("dateNumber")
+                .textContent =
+                dateNumber;
+
+
+            document
+                .getElementById("month")
+                .textContent =
+                monthName;
+
+
+            /* =================================
+               ANALOG CLOCK HANDS
+            ================================= */
+
+            const hourAngle =
+
+                (now.getHours() % 12) * 30 +
+
+                now.getMinutes() * 0.5;
+
+
+            const minuteAngle =
+
+                now.getMinutes() * 6 +
+
+                now.getSeconds() * 0.1;
+
+
+            const secondAngle =
+
+                now.getSeconds() * 6;
+
+
+            document
+                .getElementById("hourHand")
+                .style.transform =
+                `translateX(-50%) rotate(${hourAngle}deg)`;
+
+
+            document
+                .getElementById("minuteHand")
+                .style.transform =
+                `translateX(-50%) rotate(${minuteAngle}deg)`;
+
+
+            document
+                .getElementById("secondHand")
+                .style.transform =
+                `translateX(-50%) rotate(${secondAngle}deg)`;
+
+        }
+
+
+        /* Start Clock */
+
+        updateClock();
+
+
+        /* Update every second */
+
+        setInterval(
+            updateClock,
+            1000
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
